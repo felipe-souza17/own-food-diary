@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MealType {
+  BREAKFAST
+  MORNING_SNACK
+  LUNCH
+  AFTERNOON_SNACK
+  DINNER
+  SUPPER
+  OTHER
+
+  @@map("meal_type")
+}
+
+model Meal {
+  id          String      @id @default(uuid()) @db.Uuid
+  date        DateTime    @db.Date
+  mealType    MealType    @map("meal_type")
+  description String      @db.VarChar(500)
+  notes       String?     @db.VarChar(1000)
+  images      MealImage[]
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@index([date])
+  @@index([mealType])
+  @@map("meals")
+}
+
+model MealImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  url       String   @db.Text
+  pathname  String   @db.Text
+  mealId    String   @map("meal_id") @db.Uuid
+  meal      Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([mealId])
+  @@map("meal_images")
+}
+
+model ShareLink {
+  id        String   @id @default(uuid()) @db.Uuid
+  token     String   @unique @db.VarChar(32)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([token, isActive])
+  @@map("share_links")
+}
