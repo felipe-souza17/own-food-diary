@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { CalorieChartCard } from "@/components/charts/calorie-chart-card";
+import { Pagination } from "@/components/meals/pagination";
 import { PublicDiary } from "@/components/public/public-diary";
-import { APP_NAME } from "@/lib/constants";
+import { APP_NAME, PUBLIC_DIARY_DAYS_PER_PAGE } from "@/lib/constants";
+import { analyticsService } from "@/services/analytics.service";
 import { mealService } from "@/services/meal.service";
 import { shareLinkService } from "@/services/share-link.service";
 
@@ -10,6 +13,7 @@ export const revalidate = 60;
 
 interface SharePageProps {
   params: Promise<{ token: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 export const metadata: Metadata = {
@@ -18,15 +22,20 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function SharePage({ params }: SharePageProps) {
+export default async function SharePage({ params, searchParams }: SharePageProps) {
   const { token } = await params;
+  const { page: pageParam } = await searchParams;
 
   const isValid = await shareLinkService.isValidToken(token);
   if (!isValid) {
     notFound();
   }
 
-  const days = await mealService.getPublicDiary();
+  const page = Math.max(1, Number(pageParam) || 1);
+  const [diary, calorieSeries] = await Promise.all([
+    mealService.getPublicDiaryPage(page, PUBLIC_DIARY_DAYS_PER_PAGE),
+    analyticsService.getCalorieSeries(),
+  ]);
 
   return (
     <div className="min-h-dvh bg-zinc-50">
@@ -42,8 +51,17 @@ export default async function SharePage({ params }: SharePageProps) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <PublicDiary days={days} />
+      <main className="mx-auto max-w-3xl space-y-8 px-4 py-8">
+        <CalorieChartCard series={calorieSeries} />
+
+        <PublicDiary days={diary.days} />
+
+        <Pagination
+          page={diary.page}
+          totalPages={diary.totalPages}
+          searchParams={{}}
+          basePath={`/share/${token}`}
+        />
       </main>
 
       <footer className="border-t border-zinc-200 bg-white">

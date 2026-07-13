@@ -4,6 +4,7 @@ import { Pencil } from "lucide-react";
 
 import { DeleteMealButton } from "@/components/meals/delete-meal-button";
 import { MealTypeBadge } from "@/components/meals/meal-type-badge";
+import { NutritionBadge } from "@/components/nutrition/nutrition-badge";
 import { Card } from "@/components/ui/card";
 import { formatDateShort, truncate } from "@/lib/utils";
 import type { MealWithImages } from "@/types";
@@ -43,6 +44,7 @@ export function MealListItem({ meal }: { meal: MealWithImages }) {
         {meal.notes && (
           <p className="truncate text-xs text-zinc-500">{truncate(meal.notes, 120)}</p>
         )}
+        <NutritionBadge nutrition={meal.nutrition} showEmpty className="pt-0.5" />
       </div>
 
       <div className="flex shrink-0 items-center gap-1">

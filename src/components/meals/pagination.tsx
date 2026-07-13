@@ -7,9 +7,14 @@ interface PaginationProps {
   page: number;
   totalPages: number;
   searchParams: Record<string, string | undefined>;
+  basePath?: string;
 }
 
-function buildHref(searchParams: Record<string, string | undefined>, page: number): string {
+function buildHref(
+  basePath: string,
+  searchParams: Record<string, string | undefined>,
+  page: number,
+): string {
   const params = new URLSearchParams();
 
   for (const [key, value] of Object.entries(searchParams)) {
@@ -17,10 +22,15 @@ function buildHref(searchParams: Record<string, string | undefined>, page: numbe
   }
   params.set("page", String(page));
 
-  return `/admin/refeicoes?${params.toString()}`;
+  return `${basePath}?${params.toString()}`;
 }
 
-export function Pagination({ page, totalPages, searchParams }: PaginationProps) {
+export function Pagination({
+  page,
+  totalPages,
+  searchParams,
+  basePath = "/admin/refeicoes",
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const linkClasses = (disabled: boolean) =>
@@ -32,7 +42,7 @@ export function Pagination({ page, totalPages, searchParams }: PaginationProps) 
   return (
     <nav aria-label="Paginação" className="flex items-center justify-between">
       <Link
-        href={buildHref(searchParams, page - 1)}
+        href={buildHref(basePath, searchParams, page - 1)}
         aria-disabled={page <= 1}
         className={linkClasses(page <= 1)}
       >
@@ -46,7 +56,7 @@ export function Pagination({ page, totalPages, searchParams }: PaginationProps) 
       </span>
 
       <Link
-        href={buildHref(searchParams, page + 1)}
+        href={buildHref(basePath, searchParams, page + 1)}
         aria-disabled={page >= totalPages}
         className={linkClasses(page >= totalPages)}
       >

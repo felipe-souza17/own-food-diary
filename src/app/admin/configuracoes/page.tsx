@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 
+import { CalorieGoalForm } from "@/components/settings/calorie-goal-form";
 import { ShareLinkManager } from "@/components/share/share-link-manager";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { auth } from "@/lib/auth";
+import { settingsService } from "@/services/settings.service";
 import { shareLinkService } from "@/services/share-link.service";
 
 export const metadata: Metadata = {
@@ -11,7 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const [session, activeLink] = await Promise.all([auth(), shareLinkService.getActive()]);
+  const [session, activeLink, calorieGoal] = await Promise.all([
+    auth(),
+    shareLinkService.getActive(),
+    settingsService.getCalorieGoal(),
+  ]);
 
   const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
@@ -32,6 +38,19 @@ export default async function SettingsPage() {
         </CardHeader>
         <CardContent>
           <ShareLinkManager initialToken={activeLink?.token ?? null} baseUrl={baseUrl} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Meta calórica</CardTitle>
+          <CardDescription>
+            Defina o limite diário de calorias usado como referência no gráfico do dashboard e da
+            página compartilhada.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CalorieGoalForm initialGoal={calorieGoal} />
         </CardContent>
       </Card>
 

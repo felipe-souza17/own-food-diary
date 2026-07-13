@@ -1,5 +1,6 @@
 import { CalendarDays } from "lucide-react";
 
+import { DayTotals } from "@/components/nutrition/day-totals";
 import { PublicMealCard } from "@/components/public/public-meal-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDateLong } from "@/lib/utils";
@@ -25,10 +26,11 @@ export function PublicDiary({ days }: { days: MealsByDay[] }) {
           className="animate-fade-in-up"
           style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
         >
-          <div className="sticky top-0 z-10 -mx-4 mb-4 bg-zinc-50/90 px-4 py-2 backdrop-blur">
+          <div className="sticky top-0 z-10 -mx-4 mb-4 space-y-2 bg-zinc-50/90 px-4 py-2 backdrop-blur">
             <h2 className="text-sm font-semibold tracking-wide text-zinc-500 uppercase first-letter:uppercase">
               {formatDateLong(day.date)}
             </h2>
+            <DayTotals totals={day.totals} />
           </div>
 
           <div className="space-y-4">

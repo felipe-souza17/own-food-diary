@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 
 import { MealForm } from "@/components/meals/meal-form";
+import { NutritionPanel } from "@/components/nutrition/nutrition-panel";
 import { PageHeader } from "@/components/ui/page-header";
+import { isGeminiEnabled } from "@/lib/gemini";
 import { dateToInputValue } from "@/lib/utils";
 import { mealService } from "@/services/meal.service";
 
@@ -47,6 +49,8 @@ export default async function EditMealPage({ params }: EditMealPageProps) {
           })),
         }}
       />
+
+      <NutritionPanel mealId={meal.id} nutrition={meal.nutrition} aiEnabled={isGeminiEnabled()} />
     </div>
   );
 }

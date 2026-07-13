@@ -19,19 +19,61 @@ enum MealType {
   @@map("meal_type")
 }
 
+enum NutritionStatus {
+  PENDING
+  DONE
+  FAILED
+  FREE_MEAL
+
+  @@map("nutrition_status")
+}
+
 model Meal {
-  id          String      @id @default(uuid()) @db.Uuid
-  date        DateTime    @db.Date
-  mealType    MealType    @map("meal_type")
-  description String      @db.VarChar(500)
-  notes       String?     @db.VarChar(1000)
+  id          String         @id @default(uuid()) @db.Uuid
+  date        DateTime       @db.Date
+  mealType    MealType       @map("meal_type")
+  description String         @db.VarChar(500)
+  notes       String?        @db.VarChar(1000)
   images      MealImage[]
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt @map("updated_at")
+  nutrition   MealNutrition?
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
 
   @@index([date])
   @@index([mealType])
   @@map("meals")
+}
+
+model MealNutrition {
+  id        String          @id @default(uuid()) @db.Uuid
+  mealId    String          @unique @map("meal_id") @db.Uuid
+  meal      Meal            @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  status    NutritionStatus @default(PENDING)
+  calories  Float?
+  protein   Float?
+  carbs     Float?
+  fat       Float?
+  fiber     Float?
+  /// Itens estimados: [{ nome, gramas, calories, protein, carbs, fat, fiber }]
+  items     Json?
+  /// Ajuste manual: quando true, não recalcular automaticamente.
+  isManual  Boolean         @default(false) @map("is_manual")
+  model     String?
+  analyzedAt DateTime?      @map("analyzed_at")
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  @@map("meal_nutrition")
+}
+
+model DailyLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  date      DateTime @unique @db.Date
+  waterMl   Int      @default(0) @map("water_ml")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("daily_logs")
 }
 
 model MealImage {
@@ -55,4 +97,15 @@ model ShareLink {
 
   @@index([token, isActive])
   @@map("share_links")
+}
+
+/// Configurações globais da aplicação (linha única, id = "app").
+model AppSettings {
+  id              String   @id @default("app")
+  /// Meta/limite diário de calorias (kcal). 0 = sem meta definida.
+  calorieGoalKcal Int      @default(2000) @map("calorie_goal_kcal")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("app_settings")
 }

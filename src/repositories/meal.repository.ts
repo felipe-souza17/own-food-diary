@@ -26,7 +26,7 @@ export const mealRepository = {
   findMany(criteria: MealSearchCriteria) {
     return prisma.meal.findMany({
       where: buildSearchWhere(criteria.query),
-      include: { images: { orderBy: { createdAt: "asc" } } },
+      include: { images: { orderBy: { createdAt: "asc" } }, nutrition: true },
       orderBy: [{ date: criteria.sort }, { createdAt: criteria.sort }],
       skip: criteria.skip,
       take: criteria.take,
@@ -40,20 +40,20 @@ export const mealRepository = {
   findById(id: string) {
     return prisma.meal.findUnique({
       where: { id },
-      include: { images: { orderBy: { createdAt: "asc" } } },
+      include: { images: { orderBy: { createdAt: "asc" } }, nutrition: true },
     });
   },
 
   findAllForPublicDiary() {
     return prisma.meal.findMany({
-      include: { images: { orderBy: { createdAt: "asc" } } },
+      include: { images: { orderBy: { createdAt: "asc" } }, nutrition: true },
       orderBy: [{ date: "desc" }, { createdAt: "asc" }],
     });
   },
 
   findRecent(take: number) {
     return prisma.meal.findMany({
-      include: { images: { orderBy: { createdAt: "asc" } } },
+      include: { images: { orderBy: { createdAt: "asc" } }, nutrition: true },
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
       take,
     });
@@ -74,7 +74,7 @@ export const mealRepository = {
         notes: data.notes,
         images: { create: data.images },
       },
-      include: { images: true },
+      include: { images: true, nutrition: true },
     });
   },
 
@@ -103,7 +103,7 @@ export const mealRepository = {
           create: data.imagesToCreate,
         },
       },
-      include: { images: true },
+      include: { images: true, nutrition: true },
     });
   },
 
@@ -113,6 +113,27 @@ export const mealRepository = {
 
   countByDate(date: Date) {
     return prisma.meal.count({ where: { date } });
+  },
+
+  findByDate(date: Date) {
+    return prisma.meal.findMany({
+      where: { date },
+      include: { images: { orderBy: { createdAt: "asc" } }, nutrition: true },
+      orderBy: { createdAt: "asc" },
+    });
+  },
+
+  /** Refeições (com nutrição) num intervalo de datas, para as séries do gráfico. */
+  findByDateRange(from: Date, to: Date) {
+    return prisma.meal.findMany({
+      where: { date: { gte: from, lte: to } },
+      include: { nutrition: true },
+      orderBy: { date: "asc" },
+    });
+  },
+
+  countNeedingAttention() {
+    return prisma.mealNutrition.count({ where: { status: { in: ["PENDING", "FAILED"] } } });
   },
 
   countImages() {

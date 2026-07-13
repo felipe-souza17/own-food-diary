@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { MealTypeBadge } from "@/components/meals/meal-type-badge";
+import { NutritionBadge } from "@/components/nutrition/nutrition-badge";
 import { Card } from "@/components/ui/card";
 import type { MealWithImages } from "@/types";
 
@@ -8,7 +9,10 @@ export function PublicMealCard({ meal }: { meal: MealWithImages }) {
   return (
     <Card className="overflow-hidden hover:shadow-md">
       <div className="space-y-3 p-5">
-        <MealTypeBadge mealType={meal.mealType} />
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <MealTypeBadge mealType={meal.mealType} />
+          <NutritionBadge nutrition={meal.nutrition} />
+        </div>
 
         <p className="text-sm leading-relaxed text-zinc-800">{meal.description}</p>
 

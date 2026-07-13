@@ -45,3 +45,24 @@ export const UPLOAD_ALLOWED_CONTENT_TYPES = [
 export const MEALS_PAGE_SIZE = 10;
 
 export const APP_NAME = "Diário Alimentar";
+
+export const GEMINI_DEFAULT_MODEL = "gemini-3.1-flash-lite";
+export const NUTRITION_MACROS = ["protein", "carbs", "fat", "fiber"] as const;
+export type NutritionMacro = (typeof NUTRITION_MACROS)[number];
+
+export const NUTRITION_MACRO_LABELS: Record<NutritionMacro, string> = {
+  protein: "Proteína",
+  carbs: "Carboidrato",
+  fat: "Gordura",
+  fiber: "Fibra",
+};
+
+export const WATER_QUICK_ADD_ML = [200, 300, 500] as const;
+export const WATER_DAILY_GOAL_ML = 2000;
+
+export const CALORIE_GOAL_DEFAULT = 2000;
+export const CALORIE_GOAL_MAX = 20000;
+/** Quantidade de dias exibidos no gráfico de calorias. */
+export const CALORIE_CHART_DAYS = 14;
+/** Dias por página no diário público. */
+export const PUBLIC_DIARY_DAYS_PER_PAGE = 7;

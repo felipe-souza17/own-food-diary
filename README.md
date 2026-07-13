@@ -70,6 +70,8 @@ cp .env.example .env
 | `BLOB_READ_WRITE_TOKEN` | Token do Vercel Blob Storage                                      |
 | `ADMIN_EMAIL`           | Email do administrador (único usuário)                            |
 | `ADMIN_PASSWORD`        | Senha do administrador                                            |
+| `GEMINI_API_KEY`        | (Opcional) Chave gratuita do Google AI Studio para o cálculo nutricional |
+| `GEMINI_MODEL`          | (Opcional) Modelo do Gemini; padrão em `src/lib/constants.ts`     |
 
 > Não existe cadastro: o login compara as credenciais com `ADMIN_EMAIL`/`ADMIN_PASSWORD` (comparação em tempo constante). Para trocar a senha, altere a variável e reinicie/redeploye.
 
@@ -81,11 +83,13 @@ cp .env.example .env
 
 ### Executar as migrations
 
-A migration inicial já está criada em `prisma/migrations/`. Basta aplicar:
+As migrations já estão criadas em `prisma/migrations/` (inicial + nutrição/água). Basta aplicar:
 
 ```bash
 npm run db:migrate        # prisma migrate deploy — aplica as migrations existentes
 ```
+
+> Ao atualizar um projeto que já estava no ar, rode `npm run db:migrate` novamente para aplicar a migration de nutrição/água antes do deploy.
 
 Para desenvolvimento contínuo (criar novas migrations ao alterar o schema):
 
@@ -146,5 +150,19 @@ Acesse `http://localhost:3000`, faça login com `ADMIN_EMAIL`/`ADMIN_PASSWORD` e
 - **Tipos de refeição** — café da manhã, lanche da manhã, almoço, lanche da tarde, jantar, ceia e outro.
 - **Múltiplas imagens por refeição** — preview imediato, loading por arquivo, tratamento de erro com retry e remoção (limpando o storage).
 - **Compartilhar** — botão gera um token aleatório (`/share/5Lx8AaPqN2Xj…`); a página pública agrupa as refeições por data, exibe fotos, descrição e observações, é responsiva e 100% somente leitura (com `noindex`). Em Configurações é possível copiar, regenerar (invalida o anterior) ou desativar o link.
-- **UX** — skeletons, empty states, error boundaries, toasts.
+- **Análise nutricional (IA)** — ao salvar uma refeição, a descrição (que costuma conter as pesagens, ex.: "150g arroz, 120g frango") é enviada ao **Gemini**, que estima kcal + macros (proteína, carboidrato, gordura, fibra). O cálculo aparece na lista, na edição e na página pública da nutricionista. Refeições sem pesagem são marcadas como "livres". Os valores são **editáveis** (ajuste manual) e há botão **"Recalcular com IA"**.
+- **Água** — registro diário de água no dashboard, com meta e barra de progresso; acompanhamento por dia (com progresso) também na página pública.
+- **Totais por dia** — kcal, macros e água agregados por dia no dashboard e na página pública.
+- **Gráfico de calorias** — barras dos últimos 14 dias com linha de **meta calórica**; o segmento acima da meta é destacado (déficit vs. excedente). Aparece no dashboard e na página pública. A meta é configurável em **Configurações**.
+- **Paginação pública** — o link compartilhável pagina o diário **por dia** (7 dias por página), como o admin.
+- **Pontos de atenção** — refeições que a IA não conseguiu calcular ganham um aviso âmbar; o dashboard mostra quantas estão pendentes com atalho para reanalisar.
+- **UX** — skeletons, empty states, error boundaries, toasts, animações suaves.
 - **Performance** — Server Components por padrão, ISR na página pública (revalidação de 60s + on-demand nas mutações), `next/image` para otimização de imagens.
+
+### Análise nutricional com Gemini (opcional e gratuita)
+
+1. Gere uma chave gratuita no [Google AI Studio](https://aistudio.google.com/app/apikey) e coloque em `GEMINI_API_KEY`.
+2. Ao criar/editar uma refeição, a nutrição é calculada automaticamente. Para as refeições **já existentes**, abra o Dashboard e clique em **"Analisar pendentes"** (processa um lote por clique, respeitando o limite gratuito de 15 req/min).
+3. Sem a chave, o app funciona normalmente — apenas sem os números nutricionais.
+
+> **Importante:** os valores são uma **estimativa** de referência (a IA se baseia em tabelas como a TACO/USDA). A nutricionista continua sendo a autoridade; ajuste manualmente quando necessário. No tier gratuito do Gemini, os prompts podem ser usados pelo Google para treino.
