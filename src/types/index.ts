@@ -111,6 +111,49 @@ export interface Review {
   insights: ReviewInsight[];
 }
 
+export interface GamificationStats {
+  totalMeals: number;
+  totalImages: number;
+  totalDaysLogged: number;
+  currentLogStreak: number;
+  longestLogStreak: number;
+  goalWithinTotal: number;
+  goalWithinLongestStreak: number;
+  waterMetTotal: number;
+  waterMetLongestStreak: number;
+  distinctMealTypes: number;
+  completeDays: number;
+}
+
+export interface AchievementView {
+  key: string;
+  title: string;
+  description: string;
+  icon: string;
+  category: string;
+  points: number;
+  target: number;
+  progress: number;
+  unlocked: boolean;
+  unlockedAt: Date | null;
+}
+
+export interface LevelInfo {
+  level: number;
+  title: string;
+  points: number;
+  currentFloor: number;
+  nextFloor: number | null;
+}
+
+export interface GamificationState {
+  stats: GamificationStats;
+  achievements: AchievementView[];
+  level: LevelInfo;
+  unlockedCount: number;
+  totalCount: number;
+}
+
 export type ActionResult<T = void> = { ok: true; data: T } | { ok: false; error: string };
 
 export type { DailyLog, Meal, MealImage, MealNutrition, ShareLink };

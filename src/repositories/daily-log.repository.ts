@@ -12,6 +12,10 @@ export const dailyLogRepository = {
     return prisma.dailyLog.findMany({ where: { date: { in: dates } } });
   },
 
+  findAll() {
+    return prisma.dailyLog.findMany();
+  },
+
   setWater(date: Date, waterMl: number) {
     return prisma.dailyLog.upsert({
       where: { date },

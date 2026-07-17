@@ -136,6 +136,18 @@ export const mealRepository = {
     return prisma.mealNutrition.count({ where: { status: { in: ["PENDING", "FAILED"] } } });
   },
 
+  /** Linhas enxutas de todas as refeições, para as estatísticas de gamificação. */
+  findAllForStats() {
+    return prisma.meal.findMany({
+      select: {
+        date: true,
+        mealType: true,
+        nutrition: { select: { status: true, calories: true } },
+      },
+      orderBy: { date: "asc" },
+    });
+  },
+
   countImages() {
     return prisma.mealImage.count();
   },

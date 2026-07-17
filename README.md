@@ -158,6 +158,7 @@ Acesse `http://localhost:3000`, faça login com `ADMIN_EMAIL`/`ADMIN_PASSWORD` e
 - **Pontos de atenção** — refeições que a IA não conseguiu calcular ganham um aviso âmbar; o dashboard mostra quantas estão pendentes com atalho para reanalisar.
 - **Coach do dia** (só admin) — plano interativo que redistribui o orçamento calórico entre as refeições que faltam (pulou o café? o almoço sobe); os números são **calculados localmente** e a IA apenas escreve uma dica curta e prática. A dica é **cacheada por dia** (regenera só quando as refeições mudam) e carrega em streaming.
 - **Revisão dos últimos 7 dias** (só admin) — insights determinísticos (média de kcal, dias dentro da meta, sequência de registros, adesão de água) com pontos de atenção em tom construtivo.
+- **Gamificação** (só admin) — sistema de **níveis + XP**, sequências (streaks) e um mural de **conquistas/badges** por categoria (Consistência, Meta, Hidratação, Registro, Marcos). Tudo calculado localmente; conquistas ficam persistidas e desbloqueios novos são comemorados com toast. Ex.: "Uma semana firme" (7 dias seguidos), "Hidratação em dia", "Semana no alvo", "Tudo calculado".
 - **UX** — skeletons, empty states, error boundaries, toasts, animações suaves.
 - **Performance** — Server Components por padrão, ISR na página pública (revalidação de 60s + on-demand nas mutações), `next/image` para otimização de imagens.
 
