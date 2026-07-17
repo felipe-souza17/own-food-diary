@@ -123,3 +123,12 @@ model DailyCoachTip {
 
   @@map("daily_coach_tips")
 }
+
+/// Conquista desbloqueada (uma linha por badge; `key` referencia o catálogo).
+model Achievement {
+  id         String   @id @default(uuid()) @db.Uuid
+  key        String   @unique @db.VarChar(64)
+  unlockedAt DateTime @default(now()) @map("unlocked_at")
+
+  @@map("achievements")
+}

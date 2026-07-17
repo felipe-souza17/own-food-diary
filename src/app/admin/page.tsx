@@ -4,6 +4,8 @@ import { CalendarCheck, Flame, Images, Link2, Plus, TriangleAlert, UtensilsCross
 
 import { CalorieChartCard } from "@/components/charts/calorie-chart-card";
 import { CoachCard } from "@/components/coach/coach-card";
+import { AchievementSync } from "@/components/gamification/achievement-sync";
+import { AchievementsCard } from "@/components/gamification/achievements-card";
 import { MealListItem } from "@/components/meals/meal-list-item";
 import { ProcessPendingButton } from "@/components/nutrition/process-pending-button";
 import { ReviewCard } from "@/components/review/review-card";
@@ -43,6 +45,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      <AchievementSync />
       <PageHeader
         title="Dashboard"
         description="Visão geral do seu diário alimentar."
@@ -140,6 +143,8 @@ export default async function DashboardPage() {
       <CalorieChartCard series={calorieSeries} />
 
       <ReviewCard review={review} />
+
+      <AchievementsCard />
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
