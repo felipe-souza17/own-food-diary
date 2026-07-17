@@ -3,8 +3,10 @@ import Link from "next/link";
 import { CalendarCheck, Flame, Images, Link2, Plus, TriangleAlert, UtensilsCrossed } from "lucide-react";
 
 import { CalorieChartCard } from "@/components/charts/calorie-chart-card";
+import { CoachCard } from "@/components/coach/coach-card";
 import { MealListItem } from "@/components/meals/meal-list-item";
 import { ProcessPendingButton } from "@/components/nutrition/process-pending-button";
+import { ReviewCard } from "@/components/review/review-card";
 import { WaterControl } from "@/components/water/water-control";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -30,10 +32,11 @@ const statCards = [
 ] as const;
 
 export default async function DashboardPage() {
-  const [stats, recentMeals, calorieSeries] = await Promise.all([
+  const [stats, recentMeals, calorieSeries, review] = await Promise.all([
     dashboardService.getStats(),
     mealService.getRecent(5),
     analyticsService.getCalorieSeries(),
+    analyticsService.getReview(),
   ]);
   const today = todayInputValue();
   const aiEnabled = isGeminiEnabled();
@@ -100,6 +103,8 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
+      <CoachCard />
+
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
@@ -133,6 +138,8 @@ export default async function DashboardPage() {
       </div>
 
       <CalorieChartCard series={calorieSeries} />
+
+      <ReviewCard review={review} />
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">

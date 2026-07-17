@@ -109,3 +109,17 @@ model AppSettings {
 
   @@map("app_settings")
 }
+
+/// Dica diária do coach (cache por dia; regenerada quando as refeições mudam).
+model DailyCoachTip {
+  id        String   @id @default(uuid()) @db.Uuid
+  date      DateTime @unique @db.Date
+  tip       String   @db.Text
+  /// Hash do estado do dia (meta + refeições); muda ⇒ regenerar a dica.
+  mealsHash String   @map("meals_hash") @db.VarChar(64)
+  model     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("daily_coach_tips")
+}

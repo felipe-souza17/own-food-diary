@@ -156,6 +156,8 @@ Acesse `http://localhost:3000`, faça login com `ADMIN_EMAIL`/`ADMIN_PASSWORD` e
 - **Gráfico de calorias** — barras dos últimos 14 dias com linha de **meta calórica**; o segmento acima da meta é destacado (déficit vs. excedente). Aparece no dashboard e na página pública. A meta é configurável em **Configurações**.
 - **Paginação pública** — o link compartilhável pagina o diário **por dia** (7 dias por página), como o admin.
 - **Pontos de atenção** — refeições que a IA não conseguiu calcular ganham um aviso âmbar; o dashboard mostra quantas estão pendentes com atalho para reanalisar.
+- **Coach do dia** (só admin) — plano interativo que redistribui o orçamento calórico entre as refeições que faltam (pulou o café? o almoço sobe); os números são **calculados localmente** e a IA apenas escreve uma dica curta e prática. A dica é **cacheada por dia** (regenera só quando as refeições mudam) e carrega em streaming.
+- **Revisão dos últimos 7 dias** (só admin) — insights determinísticos (média de kcal, dias dentro da meta, sequência de registros, adesão de água) com pontos de atenção em tom construtivo.
 - **UX** — skeletons, empty states, error boundaries, toasts, animações suaves.
 - **Performance** — Server Components por padrão, ISR na página pública (revalidação de 60s + on-demand nas mutações), `next/image` para otimização de imagens.
 
