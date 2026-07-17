@@ -73,6 +73,44 @@ export interface CalorieSeries {
   goal: number;
 }
 
+export interface MealTypeConsumption {
+  type: string;
+  registered: boolean;
+  count: number;
+  calories: number;
+}
+
+export interface DaySnapshot {
+  dateKey: string;
+  goal: number;
+  consumed: number;
+  byType: MealTypeConsumption[];
+}
+
+export interface CoachTipResult {
+  tip: string | null;
+  snapshot: DaySnapshot;
+  aiEnabled: boolean;
+}
+
+export interface ReviewInsight {
+  tone: "positive" | "attention" | "neutral";
+  text: string;
+}
+
+export interface Review {
+  days: number;
+  daysTracked: number;
+  daysWithoutRecord: number;
+  daysWithinGoal: number;
+  daysOverGoal: number;
+  avgCalories: number | null;
+  waterDaysMetGoal: number;
+  currentStreak: number;
+  totalUncounted: number;
+  insights: ReviewInsight[];
+}
+
 export type ActionResult<T = void> = { ok: true; data: T } | { ok: false; error: string };
 
 export type { DailyLog, Meal, MealImage, MealNutrition, ShareLink };

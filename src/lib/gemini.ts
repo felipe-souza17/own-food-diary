@@ -37,11 +37,10 @@ export function getGeminiModel(): string {
   return process.env.GEMINI_MODEL?.trim() || GEMINI_DEFAULT_MODEL;
 }
 
-/**
- * Envia um prompt ao Gemini exigindo resposta JSON e devolve o texto bruto.
- * @throws {Error} quando não há chave, timeout ou resposta inválida.
- */
-export async function generateJson(prompt: string): Promise<string> {
+async function callGemini(
+  prompt: string,
+  generationConfig: Record<string, unknown>,
+): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY não configurada.");
@@ -59,11 +58,7 @@ export async function generateJson(prompt: string): Promise<string> {
         signal: controller.signal,
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema,
-            temperature: 0.2,
-          },
+          generationConfig,
         }),
       },
     );
@@ -86,4 +81,25 @@ export async function generateJson(prompt: string): Promise<string> {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+/**
+ * Envia um prompt ao Gemini exigindo resposta JSON e devolve o texto bruto.
+ * @throws {Error} quando não há chave, timeout ou resposta inválida.
+ */
+export function generateJson(prompt: string): Promise<string> {
+  return callGemini(prompt, {
+    responseMimeType: "application/json",
+    responseSchema,
+    temperature: 0.2,
+  });
+}
+
+/**
+ * Envia um prompt ao Gemini e devolve texto livre (para as dicas do coach).
+ * @throws {Error} quando não há chave, timeout ou resposta inválida.
+ */
+export async function generateText(prompt: string): Promise<string> {
+  const text = await callGemini(prompt, { temperature: 0.6, maxOutputTokens: 400 });
+  return text.trim();
 }

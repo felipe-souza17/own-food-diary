@@ -66,3 +66,21 @@ export const CALORIE_GOAL_MAX = 20000;
 export const CALORIE_CHART_DAYS = 14;
 /** Dias por página no diário público. */
 export const PUBLIC_DIARY_DAYS_PER_PAGE = 7;
+
+/**
+ * Participação típica de cada refeição no total calórico do dia (soma = 1).
+ * Usada pelo coach para redistribuir o orçamento entre as refeições restantes.
+ * "OUTRO" fica fora do planejamento (peso 0).
+ */
+export const MEAL_TYPE_CALORIE_WEIGHTS: Record<MealTypeValue, number> = {
+  BREAKFAST: 0.2,
+  MORNING_SNACK: 0.05,
+  LUNCH: 0.3,
+  AFTERNOON_SNACK: 0.1,
+  DINNER: 0.25,
+  SUPPER: 0.1,
+  OTHER: 0,
+};
+
+/** Dias considerados na revisão do dashboard. */
+export const REVIEW_PERIOD_DAYS = 7;
